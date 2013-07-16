@@ -1,0 +1,17 @@
+#envoyer des paquet deja chiffrer vers la destination localhost:10000 (donc local vers distant phase x)
+-------------------------
+http://localhost:10000/?&enc_text=encrypted_content['5642q1dqsdqzdfsf54f32sd35']&h=h['123456781234567891234567891234569']&d=difference[8]
+where :[the paquet contain : encrypted text / diff / h_real_cont]
+
+#envoyer des paquet vers la destination localhost:10000
+-------------------------
+http://localhost:10000/?&enc_text=encrypted_content['5642q1dqsdqzdfsf54f32sd35']&h=h['123456781234567891234567891234569']&d=difference[8]
+where :[the paquet contain : encrypted text / diff / h_real_cont]
+
+
+#module de traitement du push des message en clair depuis html+jquery (donc local vers distant phase 1)
+##et envoy des paquet vers la destination localhost:10000
+-------------------------
+http://localhost:10000/?&clear_text=clear_content['adrien statat']
+	clear_content
+

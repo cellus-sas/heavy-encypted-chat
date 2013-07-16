@@ -1,0 +1,11 @@
+var response = '';
+$.ajax({ type: "GET",   
+         url: "http://www.google.de",   
+         async: false,
+         success : function(text)
+         {
+             response = text;
+         }
+});
+
+alert(response);
