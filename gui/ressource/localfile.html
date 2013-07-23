@@ -4,15 +4,18 @@
 <html><head>
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type"><title>Rotating Timestamped Key for Encrypted Chat by cellus.fr</title>
 	<script src="js/jquery-latest.js"></script>
+	<script src="js/md5_crypt.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/stdtheme.css" />
 	<script>
 
+	
 	function zeroPad(num, places) {
 	  var zero = places - num.toString().length + 1;
 	  return Array(+(zero > 0 && zero)).join("0") + num;
 	}
 
-	$(function () { 		
+	$(function () { 	
+
 		$.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
 		$("textarea#input-secure-chat-room").val('');
 		update_chat();
@@ -43,37 +46,65 @@
 		$.get("http://localhost:9999/?", { clear_text: data } );
 	};
 	
+
+	var text_table=[];
+	var dc = new Date();		
 	function update_chat(){
 //		$('.my-chat-list').html('');
 		//change path in order to work localy
 		//alert('update');
 //		$.getJSON('ajax/current.json', function(data) {
+		//alert(text_table);
+		//text_table.push("ok") 
+		
 		$.getJSON('./ajax/current.json', function(data) {
 			var items = [];
 			var modified_s=false;
+			//alert(data);
 			$.each(data, function(key, val) {
-				var d = new Date();
-				var item_to_push='<ll onclick="alert(\'ok\');" id="' + key + '"> <i>'+zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+":"+zeroPad(d.getSeconds(),2)+'</i> | <u>' +val[1]+'</u>' +'<br> &nbsp;&nbsp;<b>'+ val[0].replace('\n','<br> &nbsp;&nbsp;') + '</b> </ll><br>----------------------<br>';
+				var item_to_push='<ll onclick="alert(\'ok\');" id="' + key + '"> | <u>' +val[1]+'</u>' +'<br> &nbsp;&nbsp;<b>'+ val[0].replace('\n','<br> &nbsp;&nbsp;') + '</b> </ll><br>----------------------<br>';
 				//$.contains()
+				cu_md5=MD5(item_to_push);
+				//alert();
+				if (text_table.indexOf(cu_md5)==-1){
+					//alert('append'+item_to_push);
+					text_table.push(cu_md5) 
+			
+					LINE='at <i>'+zeroPad(dc.getHours(),2)+':'+zeroPad(dc.getMinutes(),2)+":"+zeroPad(dc.getSeconds(),2)+'</i>';
+					items.push(LINE);
+								
+					items.push(item_to_push);
+					dc = new Date();
+
+					modified_s=true;
+					//alert(text_table.indexOf(cu_md5));
+				}
+				//alert(cu_md5);
 				var found_text=val[0].replace('\n','<br> &nbsp;&nbsp;');
 				//alert( found_text);
 
 				if($("div:contains('"+found_text+"')").length)
                         {
 							//alert('existing obj');
+							//items.push(item_to_push);
                         }
 				else{
 					//remove input
-					modified_s=true;
-					items.push(item_to_push);
+					//modified_s=true;
+					//items.push(item_to_push);
 				}
 			});
 			if (modified_s==true){
+				//alert(last_d);
 				scroll_down();
 			};
 			//		items.push('<form id="secure-chat-input"><textarea id="input-secure-chat-room"></textarea></form>');
 			//}
-
+			var d = new Date();
+			//var dc=d;
+			//LINE='Local time : <i>'+zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+":"+zeroPad(d.getSeconds(),2)+'</i><br>Last message : <i>'+zeroPad(dc.getHours(),2)+':'+zeroPad(dc.getMinutes(),2)+":"+zeroPad(dc.getSeconds(),2)+'</i>';
+			//items.push(LINE);
+					
 			$('<ul/>', {
 			'class': 'my-chat-list',
 			html: items.join('')

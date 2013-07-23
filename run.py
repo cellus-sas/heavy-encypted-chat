@@ -160,17 +160,19 @@ class operator(object):
 			os.remove('configuration_is_done')
 		except:
 			pass
+		self.pool_server.add_task(do_job_rungui)
+		
 		self.pool_server.add_task(do_job_config,self.ip_localhost,9998)
 
 		print '>#run thread for gui'
-		self.pool_server.add_task(do_job_rungui)
+
 		
 		print '>#run gui configuration receive thread PART 2/2 [wainting config]'
 		#waiting result of configuration
 		while not waiting_configuration_is_done:
 			print "waiting configuration post..."
 			waiting_configuration_is_done=self.check_configuration_done()
-		print self.load_param()
+		#print self.load_param()
 		self.local_ip,self.local_port,self.distant_ip,self.distant_port,self.key_dir_path=self.load_param()
 		
 #		sys.exit()
