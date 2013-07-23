@@ -5,7 +5,7 @@
 
 
 import urllib2,time,urllib
-import os
+import os,sys
 from hashlib import md5
 import pickle
 import base64
@@ -234,7 +234,7 @@ class telecom(object):
 			pkl_file = open(path_receiv_node, 'rb')
 			receiv_node_obj = pickle.load(pkl_file)
 		except:
-			sys.exit()
+			#sys.exit()
 			receiv_node_obj=[]
 		#print "do receive"
 		file_has_change=True
@@ -252,10 +252,10 @@ class telecom(object):
 					if local==True:
 						#print "dir modified for json"
 						#print os.getcwd()
-						json_path=os.getcwd()+os.sep+".."+os.sep+"pyqt_app_gui"+os.sep+"ressource"+os.sep+"ajax"+os.sep+"current.json"
+						json_path=os.getcwd()+os.sep+".."+os.sep+"gui"+os.sep+"ressource"+os.sep+"ajax"+os.sep+"current.json"
 					else:
 						#print "not modified for json"
-						json_path=os.getcwd()+os.sep+"pyqt_app_gui"+os.sep+"ressource"+os.sep+"ajax"+os.sep+"current.json"
+						json_path=os.getcwd()+os.sep+"gui"+os.sep+"ressource"+os.sep+"ajax"+os.sep+"current.json"
 					#print "json path > "+json_path
 					#print "need to add this to json"
 					with open(json_path,'r') as json_f:

@@ -53,8 +53,8 @@ def runnowait(mycommand):
    args=shlex.split(mycommand)
    p=subprocess.Popen(args)
 
-d = datetime.datetime.strptime('16 Jul 2013', '%d %b %Y')
-e = datetime.datetime.strptime('18 Jul 2013', '%d %b %Y')
+d = datetime.datetime.strptime('22 Jul 2013', '%d %b %Y')
+e = datetime.datetime.strptime('24 Jul 2013', '%d %b %Y')
 delta = datetime.timedelta(days=1)
 
 path="data"

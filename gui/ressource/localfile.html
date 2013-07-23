@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type"><title>Rotating Timestamped Key for Encrypted Chat by cellus.fr</title>
+	<script src="js/jquery-latest.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/stdtheme.css" />
+	<script>
+
+	function zeroPad(num, places) {
+	  var zero = places - num.toString().length + 1;
+	  return Array(+(zero > 0 && zero)).join("0") + num;
+	}
+
+	$(function () { 		
+		$.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
+		$("textarea#input-secure-chat-room").val('');
+		update_chat();
+		$("#input-secure-chat-room").keypress(function(event) {
+		    // Check the keyCode and if the user pressed Enter (code = 13) 
+		    if (event.keyCode == 13) {
+				content=$("textarea#input-secure-chat-room").val();
+		        send_procedure(content);   
+		        setTimeout(function() { $("textarea#input-secure-chat-room").val(''); }, 50);		        
+		    }
+		});		
+	});
+	
+	
+	function scroll_down(){
+		$('html, body').animate({scrollTop: $('html, body').height()}, 800);
+
+	};
+	
+	function send_procedure(str){
+		
+		push_discussion(str);
+	};
+	
+	
+	function push_discussion(data){
+		//alert('localhost:9999/q='+data);
+		$.get("http://localhost:9999/?", { clear_text: data } );
+	};
+	
+	function update_chat(){
+//		$('.my-chat-list').html('');
+		//change path in order to work localy
+		//alert('update');
+//		$.getJSON('ajax/current.json', function(data) {
+		$.getJSON('./ajax/current.json', function(data) {
+			var items = [];
+			var modified_s=false;
+			$.each(data, function(key, val) {
+				var d = new Date();
+				var item_to_push='<ll onclick="alert(\'ok\');" id="' + key + '"> <i>'+zeroPad(d.getHours(),2)+':'+zeroPad(d.getMinutes(),2)+":"+zeroPad(d.getSeconds(),2)+'</i> | <u>' +val[1]+'</u>' +'<br> &nbsp;&nbsp;<b>'+ val[0].replace('\n','<br> &nbsp;&nbsp;') + '</b> </ll><br>----------------------<br>';
+				//$.contains()
+				var found_text=val[0].replace('\n','<br> &nbsp;&nbsp;');
+				//alert( found_text);
+
+				if($("div:contains('"+found_text+"')").length)
+                        {
+							//alert('existing obj');
+                        }
+				else{
+					//remove input
+					modified_s=true;
+					items.push(item_to_push);
+				}
+			});
+			if (modified_s==true){
+				scroll_down();
+			};
+			//		items.push('<form id="secure-chat-input"><textarea id="input-secure-chat-room"></textarea></form>');
+			//}
+
+			$('<ul/>', {
+			'class': 'my-chat-list',
+			html: items.join('')
+			}).appendTo('#show-secure-chat-room');
+		});
+	};
+
+
+	function makeFrame(url_src="http://www.cellus.fr") {
+	   ifrm = document.createElement("IFRAME");
+	   ifrm.setAttribute("src", url_src);
+	   ifrm.style.width = 0+"px";
+	   ifrm.style.height = 0+"px";
+	   
+
+	   document.body.appendChild(ifrm);
+	};
+
+	function send_parameter(){
+		
+		//alert('send parameter');
+		
+		// local ip
+		loc_ip=$('#myselect').find(":selected").text();
+		//alert(loc_ip);
+		
+		//local port
+		loc_port=$('#port_local').val();
+		//alert(loc_port);
+
+		//remote ip
+		rem_ip=$('#ip_distant').val();
+		//alert(rem_ip);
+
+		//remote port
+		rem_port=$('#port_distant').val();
+		//alert(rem_port);
+
+		//key path
+		key_path=$('#directory').val().replace("file://",""); 
+		//alert(key_path);
+		
+		if (rem_ip!="x.x.x.x"){
+			//alert('distant ip was changed');
+			dojob=true;
+		}
+		else{
+			dojob=false;
+		}
+		
+		if (dojob==true){
+			url_forged="http://localhost:9998/?&data="+loc_ip+"~~~"+loc_port+"~~~"+rem_ip+"~~~"+rem_port+"~~~"+key_path+"~~~";
+			//alert(url_forged);
+			makeFrame(url_src=url_forged);
+			//alert('ok iframe chargé');
+			setTimeout(function(){
+				var el = document.getElementsByTagName("iframe")[0];
+				el.parentNode.removeChild(el);
+				//alert('i frame removed');
+			}, 100);
+	
+			
+	
+			$('#parameter').hide();$('#room_div').show();$('#input-secure-chat-room').focus();
+		}
+		else{
+			alert('please check field content');
+		}
+	};	
+
+	var refreshId = setInterval(function()
+	{
+		update_chat()
+	}, 500);
+
+	</script>
+	
+
+	
+	
+</head>
+	<body>
+
+		<div id="room_div" hidden>
+			<table id="room_table">
+				<tr>
+					<td>
+						<div id="chat">
+							<form id="show-secure-chat-room" class="show-secure-chat-room">
+							</form>
+						</div>				
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						<form id="secure-chat-input" class="secure-chat-input"><textarea id="input-secure-chat-room" rows="1" cols="25" maxlength="120"></textarea></form>
+					</td>
+				</tr>
+		
+		
+			</table>
+		</div>
+
+
+
+		<script>
+			$.ajax({
+			    url:'./ajax/localip.json',
+			    type:'GET',
+			    data: '',
+			    dataType: 'json',
+			    success: function( json ) {
+			        $.each(json, function(i, value) {
+						//alert('ok');
+			            $('#myselect').append($('<option>').text(value).attr('value', value));
+			        });
+			    }
+			});
+		</script>
+
+		<div id="parameter">
+			<form>
+				<table>
+					<tr>
+						<td>
+							local node
+						</td>
+						<td>
+							<select id="myselect">
+							</select>
+						</td>
+						<td>
+							:
+						</td>
+						<td>
+							<input type="text" id="port_local" value="10000" maxlength="5" size="3"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							remote node
+						</td>
+						<td>
+							<input type="text" id="ip_distant" value="x.x.x.x" maxlength="15" size="15"/>
+						</td>
+						<td>
+							:
+						</td>
+						<td>
+							<input type="text" id="port_distant" value="10000" maxlength="5" size="3"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							dir key path
+						</td>
+						<td colspan=3>						
+							<input type="text" id="directory" value="drop folder here" />
+						</td>
+					</tr>
+				</table>
+				<input type="button" value="valider" onclick="send_parameter();"/>
+			</form>
+		</div>
+	</body>
+</html>

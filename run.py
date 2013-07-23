@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-#need ntp
-import sys
+#require port 9999 free for localhost
+#require specific NAT rule for allowing receiving   
+
+#need ntp module
+import os,sys
 from telecom_operator.telecom_op import do_telecom_job  #telecom operator part
 from crypto_client.run import do_key_regeneration_job #key regeneration part
 from http_side.runkey import get_encrypted,get_decrypted #load encryption part
+from http_side.run_server_conf import do_job_config #load encryption part
 from http_side.run_server_remote_2_local import do_job_rem_2_loc #load encryption part
 from http_side.run_server_local_2_remote import do_job_loc_2_rem #load encryption part
-#from pyqt_app_gui.webbrowser import start_ui #load ui part
+from gui.run_gui import do_job_rungui #load gui
 
 from Queue import Queue
 from threading import Thread
@@ -66,15 +70,19 @@ class operator(object):
 		time.sleep(d)
 		print "end sleep"
 	
-	def load_ip(self):
+	def load_param(self):
+		#remote part
 		try:
 			with open('ip_remote','r') as f:
 				ip_remote=f.read()
 		except:
+			print "no remote ip was given"
 			ip_remote=""
 		ip_obj=ip_remote.replace('\n','').replace(' ','').split(':')
 		distant_ip=ip_obj[0]
 		distant_port=int(ip_obj[1])
+
+		#local part
 		try:
 			with open('ip_local','r') as f:
 				ip_local=f.read()
@@ -82,8 +90,19 @@ class operator(object):
 			local_ip=ip_obj[0]
 			local_port=int(ip_obj[1])
 		except:
+			print "no local ip was given"
 			ip_local=""
-		return local_ip,local_port,distant_ip,distant_port
+
+		#remote part
+		try:
+			with open('key_path','r') as f:
+				key_path=f.read()
+			key_path=key_path.replace('\n','').replace(' ','')
+		except:
+			print "no key path was given"
+			key_path=""			
+			
+		return local_ip,local_port,distant_ip,distant_port,key_path
 	
 	def get_args(self):
 		try:
@@ -101,7 +120,15 @@ class operator(object):
 			print "Arg is: (1)remoteip:port (3)dirofkey"
 			pass
 	
-			
+	def check_configuration_done(self):
+		#print "checking if configuration is done ..."
+		if os.path.exists('configuration_is_done'):
+			ans=True
+			os.remove('configuration_is_done')
+		else:
+			ans=False
+		time.sleep(1)
+		return ans
 			
 	def do_job(self):
 		#need firewall rule if firewall exist
@@ -111,36 +138,61 @@ class operator(object):
 		#add reloading/changing local port
 		#add https on both local and remote port access
 		#add http user authentification for remote port acces
-		
-	
+
+		#removing old trace
+		#for each in self.file_2_clean:
+		#	try:
+		#		os.remove(each)
+		#	except:
+		#		pass
 		self.ip_localhost="localhost"
-		self.local_ip,self.local_port,self.distant_ip,self.distant_port=self.load_ip()
-		self.key_dir_path="/home/noname/Desktop/Integrate_chat/crypto_client/key/"
 		
 		self.workable_situation=False
-		self.pool_server = ThreadPool(5)
+		
+		print '#loading threadpool'
+		self.pool_server = ThreadPool(7) #create pool
 	
-		print '#run thread server local>distant'
+		print '>#run gui configuration receive thread PART 1/2 [preload]'
+		waiting_configuration_is_done=False
+		
+		print ">#run thread server for configuration"
+		try:
+			os.remove('configuration_is_done')
+		except:
+			pass
+		self.pool_server.add_task(do_job_config,self.ip_localhost,9998)
+
+		print '>#run thread for gui'
+		self.pool_server.add_task(do_job_rungui)
+		
+		print '>#run gui configuration receive thread PART 2/2 [wainting config]'
+		#waiting result of configuration
+		while not waiting_configuration_is_done:
+			print "waiting configuration post..."
+			waiting_configuration_is_done=self.check_configuration_done()
+		print self.load_param()
+		self.local_ip,self.local_port,self.distant_ip,self.distant_port,self.key_dir_path=self.load_param()
+		
+#		sys.exit()
+		print '>#run thread server local>distant'
 		self.pool_server.add_task(do_job_loc_2_rem,self.ip_localhost,9999)
-	
-		print '#run thread server distant<local iplocal'+self.local_ip
+
+		print '>#run thread server distant<local iplocal'+self.local_ip
 		self.pool_server.add_task(do_job_rem_2_loc,self.local_ip,self.local_port)
 	
-		print '#run thread for synchonize passkey target in table'
+		print '>#run thread for synchonize passkey target in table'
 		self.pool_server.add_task(do_key_regeneration_job,self.key_dir_path)
 		
 		time.sleep(0.25)
-		print '#run thread telecom on '+self.distant_ip
+		print '>#run thread telecom on '+self.distant_ip
 		self.pool_server.add_task(do_telecom_job,self.local_ip,self.local_port,self.distant_ip,self.distant_port)
 	
-		#print '#run thread for gui'
-		#pool_server.add_task(start_ui)
-		#need to open file html
+
 		
 		self.pool_server.wait_completion()
 
 	def __init__(self):
-		self.file_2_clean=['current_key.pkl','ip_remote','ip_local']
+		self.file_2_clean=['current_key.pkl','ip_local','ip_remote','key_path','telecom_operator'+os.sep+'receiv.node','telecom_operator'+os.sep+'trans.node']		
 		self.need_exit=False
 
 #chaque tread mark son nom et son pid dans un obj
