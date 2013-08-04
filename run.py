@@ -173,8 +173,13 @@ class operator(object):
 			print "waiting configuration post..."
 			waiting_configuration_is_done=self.check_configuration_done()
 		#print self.load_param()
+		print "Configuration receive"
 		self.local_ip,self.local_port,self.distant_ip,self.distant_port,self.key_dir_path=self.load_param()
-		
+		print "start suite"
+
+		print '>#run thread for synchonize passkey target in table'
+		self.pool_server.add_task(do_key_regeneration_job,self.key_dir_path)
+
 #		sys.exit()
 		print '>#run thread server local>distant'
 		self.pool_server.add_task(do_job_loc_2_rem,self.ip_localhost,9999)
@@ -182,8 +187,6 @@ class operator(object):
 		print '>#run thread server distant<local iplocal'+self.local_ip
 		self.pool_server.add_task(do_job_rem_2_loc,self.local_ip,self.local_port)
 	
-		print '>#run thread for synchonize passkey target in table'
-		self.pool_server.add_task(do_key_regeneration_job,self.key_dir_path)
 		
 		time.sleep(0.25)
 		print '>#run thread telecom on '+self.distant_ip

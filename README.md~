@@ -30,9 +30,8 @@ or
 read directly the clear text on harddrive
 
 - default relative to the need to share an heavy list of timestamped key
- > the best way is to use usb drive/flash/sd/dvd to share physically the key. (read only is better and easy to destroy)
- > it is important to never share the key list by internet !!! 
-    if you have no other solution try using with (VPN) + SSH + HTTPS + (smart card) but don't use weak way like http seving or ftp or every other online hosting service
+> the best way is to use usb drive/flash/sd/dvd to share physically the key. (read only is better and easy to destroy)
+> it is important to never share the key list by internet !!! if you have no other solution try using with (VPN) + SSH + HTTPS + (smart card) but don't use weak way like http seving or ftp or every other online hosting service
 
 - default relative to NAT rule if you want to be able to receive content if you are behind a router 
 

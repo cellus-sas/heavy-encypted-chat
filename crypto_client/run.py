@@ -13,7 +13,7 @@ import threading
 
 
 useNTPserversync=True
-update_time_NTPserversync_delay=400 #second between time correction algo
+update_time_NTPserversync_delay=400 #second between ntp time correction algo [fix ping latency and optimze the efficiency of internation sync
 deported_time=False
 deport_time_day=0 #0-x
 deport_time_hour=9 #0-24
@@ -21,7 +21,7 @@ deport_time_minute=30 #0-59
 deport_time_second=0 #0-59
 deport_time_microsecond=0 #0-999999
 
-next_key_approching_dt=3 # 5 for 
+next_key_approching_dt=3 # 5 for #mean number of key before
 default_apprach_dt=0.001 #between 0.2 to 0.001> 0.1 is ok
 default_dt=0.5 #0.5 for seconds changing / #
 

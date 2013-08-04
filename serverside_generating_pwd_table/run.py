@@ -11,7 +11,7 @@ from hashlib import md5
 import pickle
 from cStringIO import StringIO
 
-ratio_integer_value=10 #crucial parameter : 1 mean one key per second #30 mean one key per 30 sec #60 mean one key per min (more you approach 1 more the keyfile obj is big)
+ratio_integer_value=60 #crucial parameter : 1 mean one key per second #30 mean one key per 30 sec #60 mean one key per min (more you approach 1 more the keyfile obj is big)
 ratio=float(float(1)/float(ratio_integer_value)) 
 
 class FuncThread(threading.Thread):
@@ -53,9 +53,9 @@ def runnowait(mycommand):
    args=shlex.split(mycommand)
    p=subprocess.Popen(args)
 
-d = datetime.datetime.strptime('22 Jul 2013', '%d %b %Y')
-e = datetime.datetime.strptime('24 Jul 2013', '%d %b %Y')
-delta = datetime.timedelta(days=1)
+d = datetime.datetime.strptime('04 Aug 2013', '%d %b %Y')
+e = datetime.datetime.strptime('05 Aug 2013', '%d %b %Y')
+delta = datetime.timedelta(days=2)
 
 path="data"
 try:

@@ -5,6 +5,7 @@
 	<meta content="text/html; charset=UTF-8" http-equiv="content-type"><title>Rotating Timestamped Key for Encrypted Chat by cellus.fr</title>
 	<script src="js/jquery-latest.js"></script>
 	<script src="js/md5_crypt.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/keyboard.css">
 	<link rel="stylesheet" type="text/css" href="css/stdtheme.css" />
 	<script>
 
@@ -14,7 +15,22 @@
 	  return Array(+(zero > 0 && zero)).join("0") + num;
 	}
 
+
+
 	$(function () { 	
+		
+		//$("input#keyboard").keyup(function() {
+		//   $("textarea#input-secure-chat-room").val($("input#keyboard").value );
+		//});
+
+		//$("input#keyboard").keypress(function(event) {
+			//alert(event.keyCode );
+		//    if (event.keyCode == 0) {
+		//		content=$("input#keyboard").val();
+		        //send_procedure(content);   
+		        //setTimeout(function() { $("input#keyboard").val(''); }, 50);		        
+		 //   }
+		//});
 
 		$.ajaxSetup({ scriptCharset: "utf-8" , contentType: "application/json; charset=utf-8"});
 		$("textarea#input-secure-chat-room").val('');
@@ -36,7 +52,7 @@
 	};
 	
 	function send_procedure(str){
-		
+		//alert(str);
 		push_discussion(str);
 	};
 	
@@ -164,11 +180,13 @@
 				var el = document.getElementsByTagName("iframe")[0];
 				el.parentNode.removeChild(el);
 				//alert('i frame removed');
-			}, 100);
+			}, 2000);
 	
 			
 	
-			$('#parameter').hide();$('#room_div').show();$('#input-secure-chat-room').focus();
+			$('#parameter').hide();
+			$('#room_div').show();$('#input-secure-chat-room').focus();
+			//$('#parameter').show();$('#room_div').hide();
 		}
 		else{
 			alert('please check field content');
@@ -201,7 +219,12 @@
 
 				<tr>
 					<td>
-						<form id="secure-chat-input" class="secure-chat-input"><textarea id="input-secure-chat-room" rows="1" cols="25" maxlength="120"></textarea></form>
+						
+						
+						<form id="secure-chat-input" class="secure-chat-input">
+							<textarea id="input-secure-chat-room" rows="1" cols="25" maxlength="120">
+							</textarea>
+						</form>
 					</td>
 				</tr>
 		
@@ -226,12 +249,30 @@
 			});
 		</script>
 
-		<div id="parameter">
+
+		<noscript><div id="noscript">You need JavaScript enabled to view most of the demos!</div></noscript>
+		<script type="text/javascript">
+			$(document).ready(function(){
+			
+			
+			    $(".slidingDiv").show();
+				$(".show_hide").show();
+				
+				$('.show_hide').click(function(){
+				$(".slidingDiv").slideToggle();
+				scroll_down();
+				
+				});
+			
+			});
+		</script>
+		<a href="#" class="show_hide">Parameters</a><br/>
+		<div id="parameter" class="slidingDiv">
 			<form>
 				<table>
 					<tr>
 						<td>
-							local node
+							local
 						</td>
 						<td>
 							<select id="myselect">
@@ -246,7 +287,7 @@
 					</tr>
 					<tr>
 						<td>
-							remote node
+							distant
 						</td>
 						<td>
 							<input type="text" id="ip_distant" value="x.x.x.x" maxlength="15" size="15"/>
@@ -260,14 +301,14 @@
 					</tr>
 					<tr>
 						<td>
-							dir key path
+							key path
 						</td>
 						<td colspan=3>						
 							<input type="text" id="directory" value="drop folder here" />
 						</td>
 					</tr>
 				</table>
-				<input type="button" value="valider" onclick="send_parameter();"/>
+				<input type="button" value="save" onclick="send_parameter();"/>
 			</form>
 		</div>
 	</body>

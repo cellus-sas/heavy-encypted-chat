@@ -95,12 +95,13 @@ class MyTCPHandler(SocketServer.BaseRequestHandler):
 			# just send back the same data, but upper-cased
 		except:
 			print "required_field error self.data='"+ self.data+"'"
+			required_field=""
 			pass
-		#try:
-		self.data_treatment(clear_text=required_field)
-		#except:
-		#	print "data is incorrect need to be http://host:port/?&data="
-		#	pass
+		try:
+			self.data_treatment(clear_text=required_field)
+		except:
+			print "data is incorrect need to be http://host:port/?&data="
+			pass
 		#self.request.sendall(self.data.upper())
 	
 
