@@ -37,8 +37,7 @@ The program is composed with a main program using 5 sub elements:
 
  - main program
 
- sub elements:
- -------------
+sub elements:
   -1- a part to maintain the good timestamped key
   it serve the good key at the good moment for encrypt & decrypt content
   -2- a part for web-gui (based on html+jquery+json file)
