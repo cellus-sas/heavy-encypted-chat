@@ -1,10 +1,10 @@
 heavy-encypted-chat
 ===================
 
-python encrypted chat based on auto-changing key encryption every n seconds
+python encrypted chat based on an n seconds auto-changing encryption key. 
 
 
-The wish of this program is to limit the avaibility of DPI technology owner to easily catch and decrypt the flow of packets between two or more chatters. 
+The goal  is to limit the avaibility of DPI technology owner to easily catch and decrypt the packet flow between two or more chatters. 
 
 how it s done ?
 With sharing an big list of timestampted keys then changing the key every n seconds.
